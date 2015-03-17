@@ -16,16 +16,15 @@ public class BaseConhecimento implements IBaseConhecimento
 	                           EXTENSAO = ".txt";
 	private String diretorio = BaseConhecimento.class.getResource(DIRETORIO_RELATIVO).getPath();
 	
-	private String scenario;
+	private static String scenario;
 	
 	public void setScenario(String scenario) {
-		this.scenario = scenario;
+		BaseConhecimento.scenario = scenario;
 	}
 	
     public String[] listaNomes()
     {
     	File diretorioRaiz = new File(diretorio + "/" + scenario);
-        
         String lista[] = diretorioRaiz.list();
         Vector<String> listaFiltrada = new Vector<String>();
         

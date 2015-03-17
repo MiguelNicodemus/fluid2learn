@@ -6,6 +6,7 @@ import pt.c02classes.s01knowledge.s01base.inter.IResponder;
 import pt.c02classes.s01knowledge.s01base.inter.IStatistics;
 import pt.c02classes.s01knowledge.s02app.actors.EnquirerMaze;
 import pt.c02classes.s01knowledge.s02app.actors.ResponderMaze;
+import pt.c02classes.s01knowledge.s01base.impl.BaseConhecimento;
 
 public class OrchestratorInteractive
 {

@@ -1,46 +1,96 @@
 package pt.c02classes.s01knowledge.s02app.actors;
 
-import java.util.Scanner;
-
 import pt.c02classes.s01knowledge.s01base.inter.IEnquirer;
 import pt.c02classes.s01knowledge.s01base.inter.IResponder;
+import java.util.Stack;
 
 public class EnquirerMaze implements IEnquirer {
 
-	IResponder responder;
+	IResponder responder;	
+	Stack<String> pathCovered;
+	
+	int posX,posY;
 	
 	public void connect(IResponder responder) {
 		this.responder = responder;
 	}
 	
 	public boolean discover() {
-		Scanner scanner = new Scanner(System.in);
 		
-		System.out.print("(P)ergunta, (M)ovimento ou (F)im? ");
-		String tipo = scanner.nextLine();
-		while (!tipo.equalsIgnoreCase("F")) {
-		   System.out.print("  --> ");
-		   String pc = scanner.nextLine();
-		   switch (tipo.toUpperCase()) {
-		      case "P": String resposta = responder.ask(pc);
-		                System.out.println("  Resposta: " + resposta);
-		                break;
-		      case "M": boolean moveu = responder.move(pc);
-		                System.out.println((moveu)?"  Movimento executado!":"Não é possível mover");
-		                break;
-		   }
-			System.out.print("(P)ergunta, (M)ovimento ou (F)im? ");
-			tipo = scanner.nextLine();
+		pathCovered = new Stack<String>();
+		posX = 0;
+		posY = 0;
+		
+		solveMaze();
+		
+		if (responder.finalAnswer("cheguei")) {
+			System.out.println("chegueiiii!!!");
+		}else{
+			System.out.println("fuck!");
 		}
 		
-		if (responder.finalAnswer("cheguei"))
-			System.out.println("Você encontrou a saida!");
-		else
-			System.out.println("Fuém fuém fuém!");
-		
-		scanner.close();
 		
 		return true;
 	}
 	
+	public boolean solveMaze() {
+		
+		if (responder.ask("aqui").equalsIgnoreCase("saida"))
+			return true;
+		
+		int numberMoves = pathCovered.size();
+		
+		for (int i = 0; i < numberMoves - 1; i++) {
+			if (pathCovered.elementAt(i).equalsIgnoreCase(pathCovered.peek())) {
+				return false;
+			}
+		}
+		
+		if (responder.ask("norte").equalsIgnoreCase("passagem") || responder.ask("norte").equalsIgnoreCase("saida")) {
+			posY++;
+			pathCovered.push(posX + ";" + posY);
+			responder.move("norte");
+			if (solveMaze())
+				return true;
+			else {
+				responder.move("sul");
+				pathCovered.pop();
+			}
+		}
+		if (responder.ask("sul").equalsIgnoreCase("passagem") || responder.ask("sul").equalsIgnoreCase("saida")) {
+			posY--;
+			pathCovered.push(posX + ";" + posY);
+			responder.move("sul");
+			if (solveMaze())
+				return true;
+			else {
+				responder.move("norte");
+				pathCovered.pop();
+			}
+		}
+		if (responder.ask("leste").equalsIgnoreCase("passagem") || responder.ask("leste").equalsIgnoreCase("saida")) {
+			posX++;
+			pathCovered.push(posX + ";" + posY);
+			responder.move("leste");
+			if (solveMaze())
+				return true;
+			else {
+				responder.move("oeste");
+				pathCovered.pop();
+			}
+		}
+		if (responder.ask("oeste").equalsIgnoreCase("passagem") || responder.ask("oeste").equalsIgnoreCase("saida")) {
+			posX--;
+			pathCovered.push(posX + ";" + posY);
+			responder.move("oeste");
+			if (solveMaze())
+				return true;
+			else {
+				responder.move("leste");
+				pathCovered.pop();
+			}
+		}
+		
+		return false;
+	}
 }
